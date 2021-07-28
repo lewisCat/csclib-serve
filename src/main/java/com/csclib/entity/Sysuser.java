@@ -17,24 +17,26 @@ import java.util.Date;
 @ApiModel(value = "Sysuser对象", description = "")
 public class Sysuser implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @TableId(value = "id", type = IdType.ASSIGN_ID)
-  private Long id;
+    @TableId(value = "id", type = IdType.ASSIGN_ID)
+    private String id;
 
-  private String sysname;
+    private String sysname;
 
-  private String syspwd;
+    private String syspwd;
 
-  private Integer roleid;
+    private Integer roleid;
 
-  @TableField(fill = FieldFill.INSERT)
-  private Date gtmCreate;
+    @TableField(fill = FieldFill.INSERT)
+    private Date gtmCreate;
 
-  @TableField(fill = FieldFill.INSERT_UPDATE)
-  private Date gtmModify;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date gtmModify;
 
-  @Version private Integer version;
+    @Version
+    private Integer version;
 
-  @TableLogic private Integer deleted;
+    @TableLogic
+    private Integer deleted;
 }

@@ -28,7 +28,7 @@ public class Certificates implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
+    private String id;
 
     @TableField("certName")
     private String certname;
@@ -49,7 +49,7 @@ public class Certificates implements Serializable {
     private Integer status;
 
     @ApiModelProperty(value = "关联员工ID")
-    private Long empid;
+    private String empid;
 
     @Version
     private Integer version;
