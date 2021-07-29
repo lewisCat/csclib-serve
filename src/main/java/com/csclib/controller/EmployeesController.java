@@ -25,6 +25,7 @@ import java.util.List;
  * @author Lewis
  * @since 2021-07-21
  */
+@Api(tags = "员工信息管理")
 @RestController
 @RequestMapping("/emp")
 public class EmployeesController {
@@ -35,12 +36,31 @@ public class EmployeesController {
     @ApiOperation("分页获取全部员工信息")
     @GetMapping("/list")
     public List<Employees> list(Integer current, Integer size) {
+        if (current == 0 || current == null) {
+            current = 1;
+        }
+        if (size == 0 || size == null) {
+            size = 20;
+        }
         List<Employees> list = new ArrayList<>();
         QueryWrapper<Employees> wrapper = new QueryWrapper();
-        Page<Sysuser> page = new Page<>(current, size);
-        page.setCurrent(current);
-        //service.page(page, wrapper);
+        wrapper.orderByAsc("id");
+        Page<Employees> page = new Page<>(current, size);
+        page = service.page(page, wrapper);
+        list = page.getRecords();
         return list;
+    }
+
+    @CrossOrigin
+    @ApiOperation("根据公司查询员工信息总数,如果公司为空则返回全部员工总数")
+    @GetMapping("/count")
+    public Integer getCount(String company) {
+        if (company == "" || company == null) {
+            return service.count();
+        }
+        QueryWrapper<Employees> wrapper = new QueryWrapper<>();
+        wrapper.eq("company", company);
+        return service.count(wrapper);
     }
 
     @CrossOrigin
@@ -49,6 +69,7 @@ public class EmployeesController {
     public List<Employees> queryByName(String empName) {
         List<Employees> list = new ArrayList<Employees>();
         QueryWrapper<Employees> wrapper = new QueryWrapper();
+        wrapper.eq("status", 0);
         wrapper.like("name", empName);
         list = service.list(wrapper);
         return list;
@@ -70,5 +91,12 @@ public class EmployeesController {
         return service.update(emp, wrapper);
     }
 
-
+    @CrossOrigin
+    @ApiOperation("根据身份证号查询员工")
+    @PostMapping("/qbsid")
+    public Employees queryBySid(@RequestBody String sid) {
+        QueryWrapper<Employees> wrapper = new QueryWrapper();
+        wrapper.eq("sid", sid);
+        return service.getOne(wrapper);
+    }
 }
