@@ -40,7 +40,7 @@ public class EmployeesController {
             current = 1;
         }
         if (size == 0 || size == null) {
-            size = 20;
+            size = 5;
         }
         List<Employees> list = new ArrayList<>();
         QueryWrapper<Employees> wrapper = new QueryWrapper();
@@ -48,6 +48,7 @@ public class EmployeesController {
         Page<Employees> page = new Page<>(current, size);
         page = service.page(page, wrapper);
         list = page.getRecords();
+        //list = service.list();
         return list;
     }
 
@@ -92,11 +93,27 @@ public class EmployeesController {
     }
 
     @CrossOrigin
-    @ApiOperation("根据身份证号查询员工")
-    @PostMapping("/qbsid")
-    public Employees queryBySid(@RequestBody String sid) {
+    @ApiOperation("验证员工身份证是否已存在")
+    @PostMapping("/cksid")
+    public Employees ckSid(String sid) {
         QueryWrapper<Employees> wrapper = new QueryWrapper();
         wrapper.eq("sid", sid);
         return service.getOne(wrapper);
+    }
+
+    @CrossOrigin
+    @ApiOperation("根据ID删除员工信息")
+    @GetMapping("/del")
+    public boolean addEmp(String id) {
+        UpdateWrapper<Employees> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", id);
+        return service.remove(wrapper);
+    }
+
+    @CrossOrigin
+    @ApiOperation("根据员工ID查询员工")
+    @GetMapping("/qbid")
+    public Employees queryById(String id) {
+        return service.getById(id);
     }
 }
