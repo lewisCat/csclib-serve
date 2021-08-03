@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageDto;
 import com.csclib.entity.Employees;
 import com.csclib.entity.Sysuser;
 import com.csclib.service.IEmployeesService;
@@ -15,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -33,9 +34,9 @@ public class EmployeesController {
     IEmployeesService service;
 
     @CrossOrigin
-    @ApiOperation("分页获取全部员工信息")
+    @ApiOperation("根据条件获取分页员工信息,条件可选择员工姓名或者所属公司")
     @GetMapping("/list")
-    public List<Employees> list(Integer current, Integer size) {
+    public List<Employees> list(Integer current, Integer size, String company, String empName) {
         if (current == 0 || current == null) {
             current = 1;
         }
@@ -44,6 +45,15 @@ public class EmployeesController {
         }
         List<Employees> list = new ArrayList<>();
         QueryWrapper<Employees> wrapper = new QueryWrapper();
+        if (!"".equals(company) && company != null) {
+            System.out.println("111");
+            wrapper.eq("company", company);
+
+        }
+        if (!"".equals(empName) && empName != null) {
+            System.out.println("2222");
+            wrapper.like("empname", empName);
+        }
         wrapper.orderByAsc("id");
         Page<Employees> page = new Page<>(current, size);
         page = service.page(page, wrapper);
@@ -55,26 +65,33 @@ public class EmployeesController {
     @CrossOrigin
     @ApiOperation("根据公司查询员工信息总数,如果公司为空则返回全部员工总数")
     @GetMapping("/count")
-    public Integer getCount(String company) {
-        if (company == "" || company == null) {
-            return service.count();
-        }
+    public Integer getCount(String company, String empName) {
         QueryWrapper<Employees> wrapper = new QueryWrapper<>();
-        wrapper.eq("company", company);
+        if (!"".equals(company) && company != null) {
+            wrapper.eq("company", company);
+        }
+        if (!"".equals(empName) && empName != null) {
+            wrapper.like("empname", empName);
+        }
         return service.count(wrapper);
     }
 
-    @CrossOrigin
-    @ApiOperation("根据姓名模糊查找员工")
-    @GetMapping("/qlname")
-    public List<Employees> queryByName(String empName) {
+   /* @CrossOrigin
+    @ApiOperation("根据姓名及公司名称模糊查找员工")
+    @GetMapping("/ql")
+    public List<Employees> queryByName(String empName, String company) {
         List<Employees> list = new ArrayList<Employees>();
         QueryWrapper<Employees> wrapper = new QueryWrapper();
-        wrapper.eq("status", 0);
+        if (empName != null || empName != null) {
+            wrapper.like("name", empName);
+        }
+        if (company != null || company != "") {
+            wrapper.eq("company", company);
+        }
         wrapper.like("name", empName);
         list = service.list(wrapper);
         return list;
-    }
+    }*/
 
     @CrossOrigin
     @ApiOperation("新增员工")
@@ -110,10 +127,4 @@ public class EmployeesController {
         return service.remove(wrapper);
     }
 
-    @CrossOrigin
-    @ApiOperation("根据员工ID查询员工")
-    @GetMapping("/qbid")
-    public Employees queryById(String id) {
-        return service.getById(id);
-    }
 }

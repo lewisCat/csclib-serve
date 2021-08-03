@@ -3,20 +3,20 @@ package com.csclib.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csclib.entity.Certificates;
+import com.csclib.entity.Employees;
 import com.csclib.service.ICertificatesService;
+import com.csclib.service.IEmployeesService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.security.cert.Certificate;
+import java.util.*;
 
 /**
  * <p>
@@ -32,24 +32,59 @@ import java.util.List;
 public class CertificatesController {
 
     @Autowired
-    ICertificatesService service;
+    ICertificatesService certService;
 
     @CrossOrigin
-    @ApiOperation("根据员工ID删除证书")
+    @ApiOperation("根据证书ID删除证书")
     @GetMapping("/del")
-    public boolean delCertificate(String empid) {
+    public boolean delCertificate(String id) {
         UpdateWrapper<Certificates> wrapper = new UpdateWrapper<>();
-        wrapper.eq("empid", empid);
-        return service.remove(wrapper);
+        wrapper.eq("id", id);
+        return certService.remove(wrapper);
+    }
+
+
+    @CrossOrigin
+    @ApiOperation("添加员工证书信息")
+    @PostMapping("/add")
+    public boolean addCertificato(@RequestBody Certificates certificato) {
+        System.out.println(certificato);
+        return certService.save(certificato);
     }
 
     @CrossOrigin
-    @ApiOperation("根据员工ID查找证书信息")
-    @GetMapping("/qbempid")
-    public List<Certificates> queryByEmpid(String empid) {
+    @ApiOperation("验证证书编号唯一性")
+    @GetMapping("/ckcertid")
+    public Certificates ckByCertid(String certid) {
         QueryWrapper<Certificates> wrapper = new QueryWrapper<>();
-        wrapper.eq("empid", empid);
-        return service.list(wrapper);
+        wrapper.eq("certid", certid);
+        return certService.getOne(wrapper);
     }
 
+    @CrossOrigin
+    @ApiOperation("根据搜索姓名或者公司获取证书数量")
+    @GetMapping("/count")
+    public Integer getCount(String seName, String seCompany) {
+        if ("".equals(seName)) {
+            seName = null;
+        }
+        if ("".equals(seCompany)) {
+            seCompany = null;
+        }
+        return certService.getCountByCondition(seName, seCompany);
+    }
+
+    @CrossOrigin
+    @ApiOperation("无条件分页查询全部证书信息")
+    @GetMapping("/list")
+    public List<Certificates> getAllByPage(Integer current, Integer size, String empName, String company) {
+        IPage<Certificates> page = new Page<>(current, size);
+        if ("".equals(empName)) {
+            empName = null;
+        }
+        if ("".equals(company)) {
+            company = null;
+        }
+        return certService.queryByCondition(empName, company, page);
+    }
 }

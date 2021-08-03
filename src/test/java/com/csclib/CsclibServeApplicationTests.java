@@ -3,9 +3,12 @@ package com.csclib;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.csclib.entity.Certificates;
 import com.csclib.entity.Employees;
 import com.csclib.entity.Sysuser;
+import com.csclib.mapper.CertificatesMapper;
 import com.csclib.mapper.EmployeesMapper;
+import com.csclib.service.ICertificatesService;
 import com.csclib.service.IEmployeesService;
 import com.csclib.service.ISysuserService;
 import com.csclib.utils.MD5Util;
@@ -15,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.sql.DataSource;
 import java.nio.file.Path;
+import java.security.cert.Certificate;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -39,7 +43,7 @@ class CsclibServeApplicationTests {
     }
 
     @Autowired
-    EmployeesMapper mapper;
+    EmployeesMapper empMapper;
     @Autowired
     IEmployeesService service;
 
@@ -48,5 +52,13 @@ class CsclibServeApplicationTests {
         QueryWrapper<Employees> wrapper = new QueryWrapper();
         wrapper.eq("sid", "42098419651022033X");
         System.out.println(service.getOne(wrapper));
+    }
+
+    @Autowired
+    ICertificatesService cerService;
+
+    @Test
+    void testCertMapper() {
+        IPage<Certificates> page = new Page<>(1, 1);
     }
 }
