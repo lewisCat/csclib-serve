@@ -3,13 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.csclib.mapper.CertificatesMapper">
 
-    <select id="queryAllCert" resultType="com.csclib.entity.Certificates">
+    <select id="queryAllCert" resultType="com.csclib.entity.CertificatesView">
         SELECT *
         FROM v_certificates
         where deleted = 0
     </select>
 
-    <select id="queryByCondition" resultType="com.csclib.entity.Certificates">
+    <select id="queryByCondition" resultType="com.csclib.entity.CertificatesView">
         SELECT *
         FROM v_certificates
         where deleted = 0
@@ -30,6 +30,28 @@
         </if>
         <if test="company!=null">
             and company = #{company}
+        </if>
+    </select>
+
+    <select id="checkCertId" resultType="com.csclib.entity.CertificatesView">
+        SELECT id,
+        certid,
+        certName,
+        registryDate,
+        applyDate,
+        loseEfficacyDate,
+        status,
+        empid,
+        version,
+        gtm_create,
+        gtm_modify,
+        deleted,
+        empname,
+        company
+        FROM v_certificates
+        WHERE deleted = 0
+        <if test="certid!=null">
+            AND certid = #{certid}
         </if>
     </select>
 </mapper>

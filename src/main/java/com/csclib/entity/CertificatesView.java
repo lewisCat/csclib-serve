@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value = "Certificates对象", description = "")
-public class Certificates implements Serializable {
+public class CertificatesView implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -56,4 +56,8 @@ public class Certificates implements Serializable {
   private Date gtmModify;
 
   @TableLogic private Integer deleted;
+
+  private String empname;
+
+  private String company;
 }
